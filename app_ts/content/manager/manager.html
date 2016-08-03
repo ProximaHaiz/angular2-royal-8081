@@ -1,0 +1,237 @@
+
+
+
+ <h1>{{id}}</h1>
+
+ <form class="form" action="/manager" th:object="${managerForm}" th:action="@{/manager}" id="managerForm"
+              method="post">
+            <div class="col-sm-9  col-md-10 col-md-offset-1 main">
+
+                <!-- CLIENT INFO-->
+                <!--<h2 class="page-header "> Manager board </h2>-->
+                <div class="panel panel-default">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">Manager board</div>
+
+                    <!-- Table -->
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Order#</th>
+                            <th>Time</th>
+                            <th>Client info</th>
+                            <th>Address</th>
+                            <th>Value</th>
+                            <th>Asing</th>
+                            <th>Manager info</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr *ngFor="let item of orders">
+                            <th scope="row">
+                                <p th:text="${managerDTOs[0].orderNumber}"></p>
+                            </th>
+                            <td>
+                                <p th:text="${#dates.format(#calendars.createForTimeZone(#calendars.year(managerDTOs[0].orderDay), #calendars.month(managerDTOs[0].orderDay), #calendars.day(managerDTOs[0].orderDay), #calendars.hour(managerDTOs[0].orderDay), #calendars.minute(managerDTOs[0].orderDay),'UK'), 'yyyy-MMM-dd HH:mm')}"></p>
+
+                            </td>
+                            <td>
+                                Name:{{item.fullName}}<br>
+                                Phone:{{item.phoneNumber}}
+                                Email:{{item.mail}}
+                            </td>
+                            <td>
+                                From: {{item.loadingAddress}}<br>
+                                To: {{item.unloadingAddress}}<br>
+                                Distance: 35 miles
+                            </td>
+                            <td>
+                                truck:1
+                                movers:2
+                                rate per 1 hour: $125
+                            </td>
+                            <td style="width: 25%">
+                                <div>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Truck</span>
+                                        <div class="dropdown">
+                                            <select style="width: 50%;" class="form-control" id="truck"
+                                                    th:field="*{truck}">
+                                                <option th:each="truck : ${actualListTruck}"
+                                                        th:value="${truck}"
+                                                        th:text="#{${truck}}">Wireframe
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!--<p-->
+                                    <div class="input-group">
+                                        <span class="input-group-addon" id="basic-addon15994223">Forman</span>
+                                        <div class="dropdown">
+                                            <select style="width: 50%;" class="form-control" id="movers"
+                                                    th:field="*{movers}">
+                                                <option th:each="movers : ${actualListMovers}"
+                                                        th:value="${movers}"
+                                                        th:text="#{${movers}}">Wireframe
+                                                </option>
+                                            </select>
+                                            <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
+                                        </div>
+                                    </div>
+                                    <!--/>-->
+                                    
+
+                                    <!--<p-->
+                                    <div class="input-group">
+                                        <span class="input-group-addon" id="basic-addon15994223">Driver</span>
+                                        <div class="dropdown">
+                                            <select style="width: 50%;" class="form-control" id="movers"
+                                                    th:field="*{movers}">
+                                                <option th:each="movers : ${actualListMovers}"
+                                                        th:value="${movers}"
+                                                        th:text="#{${movers}}">Wireframe
+                                                </option>
+                                            </select>
+                                            <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
+                                        </div>
+                                    </div>
+                                    <!--/>-->
+
+
+                                    <div class="input-group">
+                                        <span class="input-group-addon" id="basic-addon15994223">Mover</span>
+                                        <div class="dropdown">
+                                            <select style="width: 50%;" class="form-control" id="movers"
+                                                    th:field="*{movers}">
+                                                <option th:each="movers : ${actualListMovers}"
+                                                        th:value="${movers}"
+                                                        th:text="#{${movers}}">Wireframe
+                                                </option>
+                                            </select>
+                                            <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="comment">Comment for manager:</label>
+                                    <textarea class="form-control" rows="5" id="comment"></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-pill btn-primary">Print</button>
+                                <button type="button" class="btn btn-sm btn-pill btn-primary">Submit</button>
+                            </td>
+
+                        </tr>
+                        <!--<tr>
+                            <th scope="row">
+                                2
+                            </th>
+                            <td>
+                                7/19/2016 PM: 12:00
+                            </td>
+                            <td>
+                                Name:Ottewo moewtto
+                                Phone:3232323333
+                                Email:aseeefg@mail.com
+                            </td>
+                            <td>
+                                From: orrlolo street 90002
+                                To: fokrrrok avenue 90003
+                                Distance: 35 miles
+                            </td>
+                            <td>
+                                truck:1
+                                movers:2
+                                rate per 1 hour: $125
+                            </td>
+                            <td style="width: 25%">
+                                <div>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Truck</span>
+                                        <div class="dropdown">
+                                            <select style="width: 50%;" class="form-control" id="truck"
+                                                    th:field="*{truck}">
+                                                <option th:each="truck : ${actualListTruck}"
+                                                        th:value="${truck}"
+                                                        th:text="#{${truck}}">Wireframe
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                  
+                                    <div class="input-group">
+                                        <span class="input-group-addon" id="basic-addon15994223">Forman</span>
+                                        <div class="dropdown">
+                                            <select style="width: 50%;" class="form-control" id="movers"
+                                                    th:field="*{movers}">
+                                                <option th:each="movers : ${actualListMovers}"
+                                                        th:value="${movers}"
+                                                        th:text="#{${movers}}">Wireframe
+                                                </option>
+                                            </select>
+                                            <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
+                                        </div>
+                                    </div>
+
+                                  
+
+                                   
+                                    <div class="input-group">
+                                        <span class="input-group-addon" id="basic-addon15994223">Driver</span>
+                                        <div class="dropdown">
+                                            <select style="width: 50%;" class="form-control" id="movers"
+                                                    th:field="*{movers}">
+                                                <option th:each="movers : ${actualListMovers}"
+                                                        th:value="${movers}"
+                                                        th:text="#{${movers}}">Wireframe
+                                                </option>
+                                            </select>
+                                            <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
+                                        </div>
+                                    </div>
+                                    
+
+                             
+                                    <div class="input-group">
+                                        <span class="input-group-addon" id="basic-addon15994223">Mover</span>
+                                        <div class="dropdown">
+                                            <select style="width: 50%;" class="form-control" id="movers"
+                                                    th:field="*{movers}">
+                                                <option th:each="movers : ${actualListMovers}"
+                                                        th:value="${movers}"
+                                                        th:text="#{${movers}}">Wireframe
+                                                </option>
+                                            </select>
+                                            <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <label for="comment">Comment for manager:</label>
+                                    <textarea class="form-control" rows="5" id="comment"></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-pill btn-primary">Print</button>
+                                <button type="button" class="btn btn-sm btn-pill btn-primary">Submit</button>
+                            </td>
+
+                        </tr>-->
+                        <!--<tr>-->
+                        <!--<th scope="row">2</th>-->
+                        <!--<td>Jacob</td>-->
+                        <!--<td>Thornton</td>-->
+                        <!--<td>@fat</td>-->
+                        <!--</tr>-->
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </form>
