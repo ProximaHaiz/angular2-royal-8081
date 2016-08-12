@@ -3,7 +3,6 @@ import {AppComponent} from "./app.component";
 import {HTTP_PROVIDERS} from "@angular/http";
 import { APP_ROUTER_PROVIDERS } from './app.routes';
 import { disableDeprecatedForms, provideForms} from '@angular/forms';
-import{ProductServiceComponent} from './service/product.service';
 import{CategoryServiceComponent} from './service/category.service';
 import{UserServiceComponent} from './service/user.service';
 
@@ -19,7 +18,6 @@ bootstrap(AppComponent, [
                          DataHandlerService,
                          disableDeprecatedForms(),
                          provideForms(),
-                         ProductServiceComponent,
                          CategoryServiceComponent,
                          UserServiceComponent
                          ])

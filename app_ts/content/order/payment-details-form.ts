@@ -15,6 +15,7 @@ export class PaymentDetailsForm{
     packingMaterialsValue:number;//+
     rateType:string;
     heavyItem:string;
+    heavyItemPrice:number;
     ddt:number;
     totalForFirstHours:number;
     status:string;

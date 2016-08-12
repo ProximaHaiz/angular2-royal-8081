@@ -9,7 +9,7 @@
 	    <span class="icon-bar"></span>
         </button>
 
-            <a class="navbar-brand" href="/data/get"><span class="glyphicon glyphicon-home" ></span> Home</a>
+            <a class="navbar-brand" href="/content/order"><span class="glyphicon glyphicon-home" ></span> Home</a>
              <a class="navbar-brand" [routerLink]="['/content']">Content</a>
 
         </div>
@@ -17,16 +17,16 @@
         <div class="navbar-collapse collapse spaces" id="navbar">
                 
            <div class="form-group header-input col-md-4 ">
-                <input class="form-control input-md"  type="text"
+                <!--<input class="form-control input-md"  type="text"
                 (keyup)="updateValue()"  [formControl] ="searchField"
-                  placeholder="Search...">
+                  placeholder="Search...">-->
          </div>
 
                 <div class="col-md-4">
                     <ul class="nav navbar-nav navbar-rightnavbar-height navbar-height">
                         <li><a [routerLink]="['/register']" > <span class="glyphicon glyphicon-user"></span>Sign up</a></li>
                         <li><a [routerLink]="['/login']" ><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-                         <li><a [routerLink]="['/schedule']" ><span class="glyphicon glyphicon-log-in"></span> Schedule</a></li>
+                         <li><a [routerLink]="['/content/schedule']" ><span class="glyphicon glyphicon-log-in"></span> Schedule</a></li>
                         <li><a th:href="@{/logout}" href="/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                     </ul>
                 </div>

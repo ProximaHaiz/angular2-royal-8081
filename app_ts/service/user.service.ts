@@ -3,8 +3,6 @@ import { Http, Response, Headers, URLSearchParams, RequestOptions } from '@angul
 import { Observable } from 'rxjs/Observable';
 import {ContactComponent} from '../login/contact';
 import {Categories} from '../content/categories/categories.component';
-import {IContent} from '../content/content-element';
-import {CONTENT_ITEMS} from '../content/content-data';
 import { API_URL } from './urls';
 import { AbstractService } from './abstract.service'
 

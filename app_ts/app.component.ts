@@ -4,7 +4,6 @@ import { ROUTER_DIRECTIVES} from '@angular/router';
 import { HTTP_PROVIDERS } from '@angular/http';
 import{ContentComponent} from './content/content.component';
 import {RegistrationFormComponent} from './registration/registration.component';
-import{DropDownComponent} from './content/drop_down.component';
 import {SingleContentComponent} from './content/single_element/single-product.component';
 import {NavBarComponent} from './navbar/nav-bar.component'
 

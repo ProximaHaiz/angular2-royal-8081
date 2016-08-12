@@ -3,7 +3,7 @@ import {HTTP_PROVIDERS}    from '@angular/http';
 import {ROUTER_DIRECTIVES} from '@angular/router';
 import {
   Schedule, Button, InputText, Calendar, Dialog, Checkbox, TabPanel, TabView,
-  CodeHighlighter, Dropdown, SplitButton, SplitButtonItem, MultiSelect, InputSwitch, Growl, InputMask
+  CodeHighlighter, Dropdown, SplitButton, SplitButtonItem, MultiSelect, InputSwitch, Growl, InputMask, SelectItem,
 } from "primeng/primeng";
 import {
   FormBuilder,
@@ -13,6 +13,7 @@ import {
 } from '@angular/forms';
 import {OrderModel} from './order';
 import {OrderService} from '../../service/order.service';
+import {GoogleApiService} from '../../service/google-api.service';
 import {SelectorsService} from '../../service/selectors.service';
 import {HeavyItemType} from './enums/heavy-item.enum';
 import {StorageSizeType} from './enums/storage-size.enum';
@@ -21,9 +22,29 @@ import {StatusType} from './enums/status.enum';
 import {PaymentPrice} from './payment-price';
 import {CompanyPrice} from './company-price';
 
+import {Advertisements} from './interfaces/advertisement';
+import {HeavyItem, Companies} from './interfaces/heavy-item';
+import {Message} from './interfaces/message';
+import {Movers} from './interfaces/mover';
+import {PaymentMethods} from './interfaces/payment-method';
+import {RatePerHours} from './interfaces/rate-per-hour';
+import {PackingMaterial} from './interfaces/package-material';
+import {SizeOfMoves} from './interfaces/size-of-move';
+import {Status} from './interfaces/status';
+import {StorageSize} from './interfaces/storage-size';
+import {Tape} from './interfaces/tape';
+import {Tariffs} from './interfaces/tariffs';
+import {TotalHour} from './interfaces/total-hour';
+import {Vehicle} from './interfaces/vehicle';
+import {Trucks,Shrink} from './interfaces/truck';
+import {PriceCategory} from './utils/category-price';
+import { SearchDistance } from './utils/search-distance';
+
+
+
 import {MoversType,PaymentMethodType,TariffType,RatePerHourType,
   PackageMaterialType,ShrinkType, TapeType,CompanyType,AdvertisementType,
-SizeOfMoveType, TruckType} from './enums/all-enums'
+SizeOfMoveType, TruckType, PriceCategoryType} from './enums/all-enums';
 // import { CompanyType1 } from './advertisement-type'
 //TODO: Попрорбовать еще раз enum в другом классе!
 
@@ -37,7 +58,7 @@ SizeOfMoveType, TruckType} from './enums/all-enums'
     SplitButtonItem, MultiSelect, InputSwitch, Growl,
     ROUTER_DIRECTIVES,
     REACTIVE_FORM_DIRECTIVES],
-  providers: [HTTP_PROVIDERS, OrderService, SelectorsService],
+  providers: [HTTP_PROVIDERS, OrderService, SelectorsService, GoogleApiService],
 })
 
 export class OrderComponent implements OnInit {
@@ -47,6 +68,7 @@ export class OrderComponent implements OnInit {
   private paymentPrice:PaymentPrice;
   private companyPrice:{[id:string]:CompanyPrice};
   private val2:number;
+  private categoryType:PriceCategoryType;
 
 
   private moverType:MoversType;//текущее количество выбранных movers
@@ -63,87 +85,24 @@ export class OrderComponent implements OnInit {
   private paymentMethods:PaymentMethods[];
   private ratePerHour:RatePerHours[];
   private packageMaterials:PackingMaterial[];
-  private shrinks:Shrinks[];
+  private shrinks:Shrink[];
   private tapes:Tape[];
-  private heavyItems:HeavyItem[];
+  // private heavyItems:HeavyItem[];
   private storageSizes:StorageSize[];
   private totalHours:TotalHour[];
   private display:boolean = false;
   private msgs:Message[];
   private status:Status[];
   private date:Date = new Date();
+  private vehicle:Vehicle;
+  private moveDate:string;
+  
 
-  private initCompanyPrice() {
+  heavyItems: SelectItem[];
 
-    this.companyPrice = {
-      'Shark': {
-        two: 75,
-        three: 105,
-        four: 135,
-        five: 165,
-        six: 225,
-        seven: 7,
-        eight: 8,
-        nine: 9,
-        ten: 10
-      },
-      'Apple': {
-        two: 75,
-        three: 105,
-        four: 135,
-        five: 165,
-        six: 225,
-        seven: 7,
-        eight: 8,
-        nine: 9,
-        ten: 10
-      },
-      'Muscle': {
-        two: 75,
-        three: 105,
-        four: 135,
-        five: 165,
-        six: 225,
-        seven: 7,
-        eight: 8,
-        nine: 9,
-        ten: 10
-      },
-      'Pacific': {
-        two: 85,
-        three: 115,
-        four: 145,
-        five: 175,
-        six: 235,
-        seven: 7,
-        eight: 8,
-        nine: 9,
-        ten: 10
-      },
-      'Lions': {
-        two: 75,
-        three: 105,
-        four: 135,
-        five: 165,
-        six: 225,
-        seven: 7,
-        eight: 8,
-        nine: 9,
-        ten: 10
-      },
-      'Royal': {
-        two: 75,
-        three: 105,
-        four: 135,
-        five: 165,
-        six: 225,
-        seven: 7,
-        eight: 8,
-        nine: 9,
-        ten: 10
-      }
-    }
-  }
+    selectedheavyItems: string[] = [];
+
+  private priceCategory:PriceCategory;
 
   private initPaymentPrice() {
     this.paymentPrice = new PaymentPrice();
@@ -160,11 +119,42 @@ export class OrderComponent implements OnInit {
 
   }
 
+  private changePriceOfHeavyItem(items:string []){
+          let heavyItemPrice:number = 0;
+          items.forEach(element => {
+            switch(element){
+              case 'Grand piano': heavyItemPrice += 100;
+              break;
+              case 'Full table' : heavyItemPrice += 150; break;
+              case 'Gun safe': heavyItemPrice += 100; break;
+              case 'Baby grand piano': heavyItemPrice += 100; break;
+              case 'Upright piano': heavyItemPrice += 100; break;
+              case 'Jacuzzi': heavyItemPrice += 150; break;
+            }
+          });
+          this.timeModel.paymentDetailsForm.heavyItemPrice =  heavyItemPrice;
+          console.log('heavyItemPrice:'+this.timeModel.paymentDetailsForm.heavyItemPrice)
+  } 
+
+  changeMultiSelect(item:any){
+    console.log('Changed!'+this.selectedheavyItems);
+    this.changePriceOfHeavyItem(this.selectedheavyItems);
+    this.changeTotalPrice();
+  }
+
   constructor(private _fb:FormBuilder,
               private _orderService:OrderService,
-              private _selectorsService:SelectorsService) {
+              private _selectorsService:SelectorsService,
+              private _googleApiService: GoogleApiService) {
     this.timeModel = new OrderModel();
-
+     this.heavyItems = [];
+        this.heavyItems.push({label: 'Grand piano', value: 'Grand piano'});
+        this.heavyItems.push({label: 'Full table', value: 'Full table'});
+        this.heavyItems.push({label: 'Gun safe', value: 'Gun safe'});
+        this.heavyItems.push({label: 'Baby grand piano', value:'Baby grand piano'});
+        this.heavyItems.push({label: 'Upright piano', value: 'Upright piano'});
+        this.heavyItems.push({label: 'Jacuzzi', value: 'Jacuzzi'});
+       
     this.orderForm = this._fb.group({
 
       // 'client': _fb.group({
@@ -202,7 +192,7 @@ export class OrderComponent implements OnInit {
 
       'estimateDate': new FormControl(this.timeModel.orderForm.estimateDate, Validators.required),
       'estimateStartTime': new FormControl(this.timeModel.orderForm.estimateDateTime, Validators.required),
-      'estimateEndTime': new FormControl(this.timeModel.estimateEndTime, Validators.required),
+      'estimateEndTime': new FormControl('', Validators.required),
 
       'isLabor': new FormControl(this.timeModel.orderForm.isLabor, Validators.required),
       'storageDate': new FormControl(this.timeModel.paymentDetailsForm.storageDate, Validators.required),
@@ -210,6 +200,8 @@ export class OrderComponent implements OnInit {
       //Payment-details Form:
 
       'selectCompany': new FormControl('', Validators.required),
+      'forsalesComment': new FormControl('', Validators.required),
+      'forManagerComment': new FormControl('', Validators.required),
   
 
 
@@ -274,7 +266,23 @@ export class OrderComponent implements OnInit {
 /*
   Метод, присваивающий значения с формы в поля бизнесс сущности
 **/
-  private createEntityes() {
+  private createPaymentDetailsFormEntity() {
+  
+    //Prices
+     this.timeModel.paymentDetailsForm.ratePerHour = this.paymentPrice.ratePerHourPrice;
+     this.timeModel.paymentDetailsForm.ddt = this.paymentPrice.ddtPrice;
+     this.timeModel.paymentDetailsForm.tapeValue = this.paymentPrice.tapesPrice;
+     this.timeModel.paymentDetailsForm.shrinkValue = this.paymentPrice.shrinkPrice;
+     this.timeModel.paymentDetailsForm.discount = this.paymentPrice.discount;
+     this.timeModel.paymentDetailsForm.packingMaterialsValue = this.paymentPrice.packingMaterialPrice;
+
+     //comments
+     this.timeModel.paymentDetailsForm.fieldForSalesmanComments = this.orderForm.controls['forsalesComment'].value;
+     this.timeModel.paymentDetailsForm.fieldForManagerComments = this.orderForm.controls['forManagerComment'].value;
+
+  }
+
+  private createOrderFormEntity(){
     this.timeModel.orderForm.fullName = this.orderForm.controls['fullName'].value;
     this.timeModel.orderForm.mail = this.orderForm.controls['mail'].value;
     this.timeModel.orderForm.phoneNumber = this.orderForm.controls['phoneNumber'].value;
@@ -291,19 +299,10 @@ export class OrderComponent implements OnInit {
     this.timeModel.orderForm.storageDate = this.orderForm.controls['storageDate'].value;
 
 
+    //Dates into top form
     this.timeModel.orderForm.moveDateTime = this.timeMove;
     this.timeModel.orderForm.packingDateTime = this.timePackage;
     this.timeModel.orderForm.estimateDateTime = this.timeEstimate;
-
-    
-    //Prices
-     this.timeModel.paymentDetailsForm.ratePerHour = this.paymentPrice.ratePerHourPrice;
-     this.timeModel.paymentDetailsForm.ddt = this.paymentPrice.ddtPrice;
-     this.timeModel.paymentDetailsForm.tapeValue = this.paymentPrice.tapesPrice;
-     this.timeModel.paymentDetailsForm.shrinkValue = this.paymentPrice.shrinkPrice;
-     this.timeModel.paymentDetailsForm.discount = this.paymentPrice.discount;
-     this.timeModel.paymentDetailsForm.packingMaterialsValue = this.paymentPrice.packingMaterialPrice;
-
   }
 
   private createTestEntityes(){
@@ -312,7 +311,7 @@ export class OrderComponent implements OnInit {
      this.timeModel.orderForm.company='testCompany';
       this.timeModel.orderForm.estimateDate='2016-08-08';
        this.timeModel.orderForm.estimateDateTime='03:00-04:00 a.m.'
-        this.timeModel.orderForm.fullName='testFullName';
+        this.timeModel.orderForm.fullName='testFullName2';
          this.timeModel.orderForm.isLabor=true;
           this.timeModel.orderForm.loadingAddress= [
             {address:'testAddressFrom1',zip:1111,floor:1},
@@ -323,13 +322,14 @@ export class OrderComponent implements OnInit {
           this.timeModel.orderForm.mail='test@gmail.com';
           this.timeModel.orderForm.moveDate='2016-08-08';
           this.timeModel.orderForm.moveDateTime='03:00-04:00 a.m.';
-          this.timeModel.orderForm.packingDate='2016-08-08';
-          this.timeModel.orderForm.packingDateTime='03:00-04:00 p.m.';
-           this.timeModel.orderForm.phoneNumber='0631113322';
-           this.timeModel.orderForm.sizeOfMove='sizeOfMoveTest'
-            this.timeModel.orderForm.storageDate='2016-08-08'
+              this.timeModel.orderForm.packingDate='2016-08-08';
+             this.timeModel.orderForm.packingDateTime='03:00-04:00 p.m.';
+             this.timeModel.orderForm.phoneNumber='0631113322';
+             this.timeModel.orderForm.sizeOfMove='sizeOfMoveTest'
+             this.timeModel.orderForm.storageDate='2016-08-08'
              this.timeModel.orderForm.storageSize='storageSizeTest';
              this.timeModel.orderForm.tariff='testTariff';
+             this.timeModel.orderForm.distance = 101;
 
             //PaimtenDeatilsForm
              this.timeModel.paymentDetailsForm.company='testCompany';
@@ -354,19 +354,17 @@ export class OrderComponent implements OnInit {
              this.timeModel.paymentDetailsForm.tape=5;
              this.timeModel.paymentDetailsForm.tapeValue=55;
              this.timeModel.paymentDetailsForm.tariff='2222';
-             this.timeModel.paymentDetailsForm.totalForFirstHours=222;
+             this.timeModel.paymentDetailsForm.totalForFirstHours=1100;
              this.timeModel.paymentDetailsForm.truck=5;
-  }
-
-  private companyPickPrice() {
-
+             this.timeModel.paymentDetailsForm.fieldForManagerComments='Test! Hi manager!'
+             this.timeModel.paymentDetailsForm.fieldForSalesmanComments='Test! hi saleman!';
   }
 
   selectCompany(item:any) {
     this.selectedCompany = item;
     console.log('selectedCompany:' + item.name)
     this.timeModel.orderForm.company = item.name;
-    this.changeMoverPrice();
+    this.changeMoverPrice();//меняет цены в зависиости от выбраной компании
 
   }
 
@@ -412,12 +410,14 @@ export class OrderComponent implements OnInit {
    Метод, который динамически изменяет цены в зависимости от выбранной компании и количества movers
    **/
   private changeMoverPrice() {
-      console.log('changeMoverPrice')
+    
+   this.changeCategoryPrice();
     let company = this.timeModel.orderForm.company;
-    console.log('changeMoverPrice')
+    console.log('3 invoke, categoryType:'+ this.categoryType);
     switch (this.moverType) {
       case MoversType.TWO:
         this.paymentPrice.ratePerHourPrice = this.companyPrice[company].two;
+        console.log('3.1 invoke, ratePerHourPrice:'+ this.categoryType);
         break;
       case MoversType.THREE:
         this.paymentPrice.ratePerHourPrice = this.companyPrice[company].three;
@@ -446,7 +446,26 @@ export class OrderComponent implements OnInit {
     }
     console.log('moverPrice:' + this.paymentPrice.ratePerHourPrice)
     this.changeTotalPrice();
+}
+
+//В зависимости от ценовой категории, присваивает ценовые значения из объекта-хранилища
+private changeCategoryPrice(){
+  console.log('2 invoke, categoryType:'+ this.categoryType);
+  switch(this.categoryType){
+    case PriceCategoryType.MONDAY_THUESDAY:this.companyPrice = this.priceCategory.md_th_price;
+    console.log('Type - MONDAY_THUESDAY')
+          break;
+    case PriceCategoryType.END_OF_MONTH:this.companyPrice = this.priceCategory.end_of_month_price;
+    console.log('Type - END_OF_MONTH')
+          break;
+    case PriceCategoryType.FRIDAY_SUNDAY:this.companyPrice = this.priceCategory.fr_sd_price;
+          console.log('Type - FRIDAY_SUNDAY')
+          break;
+      case PriceCategoryType.ALL_INCLUSIVE:this.companyPrice = this.priceCategory.allInclusiveprice;
+          console.log('Type - ALL_INCLUSIVE')
+          break;
   }
+}
 
 
   /*
@@ -454,19 +473,12 @@ export class OrderComponent implements OnInit {
   **/
   changeTotalPrice() {
     let discount = this.paymentPrice.discount === 0 ? 1 : this.paymentPrice.discount;
-    let perHour = this.timeModel.paymentDetailsForm.totalForFirstHours == undefined ? 1 : this.timeModel.paymentDetailsForm.totalForFirstHours;
+    let perHour = this.timeModel.paymentDetailsForm.totalForFirstHours == undefined ? 1 :
+                  this.timeModel.paymentDetailsForm.totalForFirstHours;
 
-    console.log('changeTotalPrice:');
-    console.log(' this.paymentPrice.ddtPrice:' + this.paymentPrice.ddtPrice);
-    console.log(' this.paymentPrice.heavyItemPrice' + this.paymentPrice.heavyItemPrice);
-    console.log(' t this.paymentPrice.packingMaterialPrice' + this.paymentPrice.packingMaterialPrice);
-    console.log(' this.paymentPrice.ratePerHourPrice' + this.paymentPrice.ratePerHourPrice);
-    console.log('this.paymentPrice.serviceChargePrice' + this.paymentPrice.serviceChargePrice);
-    console.log('this.paymentPrice.shrinkPrice' + this.paymentPrice.shrinkPrice);
-    console.log('this.paymentPrice.sizeOfStorageSizePrice' + this.paymentPrice.sizeOfStorageSizePrice);
-    console.log('this.paymentPrice.tapesPrice' + this.paymentPrice.tapesPrice);
-    console.log('this.paymentPrice.discount' + this.paymentPrice.discount);
-    this.paymentPrice.totalHourPrice = (
+    this.paymentPrice.totalHourPrice =
+     this.timeModel.paymentDetailsForm.heavyItemPrice + 
+     (
       this.paymentPrice.ddtPrice +
       this.paymentPrice.heavyItemPrice +
       this.paymentPrice.packingMaterialPrice +
@@ -476,6 +488,10 @@ export class OrderComponent implements OnInit {
       this.paymentPrice.sizeOfStorageSizePrice +
       this.paymentPrice.tapesPrice) * perHour;
 
+  }
+
+  selectedVehiclePm(item:any){
+    console.log('Vehicle selected:'+item.vehicleRegNumber)
   }
 
   selectRateperhour(item:RatePerHours) {
@@ -574,16 +590,30 @@ export class OrderComponent implements OnInit {
     console.log('choosedate2');
   }
 
-  sent() {
+  sentOrderForm() {
     console.log('Sent: TimeMove:' + this.timeMove);
-    this.createEntityes();
+    this.createOrderFormEntity();
 
     this._orderService.saveOrder(this.timeModel)
       .subscribe(
         data => {
         },
         error => {
-          console.log('login error: ' + error)
+          console.log('Error: sentOrderForm ' + error)
+        });
+  }
+
+  sentFullForm(){
+        console.log('SentFullForm');
+    this.createOrderFormEntity();
+    this.createPaymentDetailsFormEntity();
+
+    this._orderService.saveOrder(this.timeModel)
+      .subscribe(
+        data => {
+        },
+        error => {
+          console.log('error:sentFullForm '+ error)
         });
   }
   sentTest(){
@@ -594,13 +624,115 @@ export class OrderComponent implements OnInit {
         data => {
         },
         error => {
-          console.log('login error: ' + error)
+          console.log('Error:sentTest ' + error)
         });
   }
 
+    private calendarDateSelect(event:any) {
+    
+    // this.msgs = [];
+    // this.msgs.push({severity: 'info', summary: 'Info Message', detail: '' + this.orderForm.controls['moveDate'].value+'\n'+this.orderForm.controls['moveDate'].value});//show message on the top of page
+    this.moveDate = this.orderForm.controls['moveDate'].value;
+    this.getPriceCategory();
+      console.log('------------------------------------------')
+}
+
+/**
+ * get Distance between AddressesFrom and addressesTo and show the results on tip messages
+ */
+getDistance(){
+    let searchDistance = new SearchDistance();
+    searchDistance.loadingAddress = this.orderForm.controls['loadingAddress'].value;
+    searchDistance.unloadingAddress =  this.orderForm.controls['unLoadingAddress'].value;
+
+   this._googleApiService.getDistance(searchDistance)
+      .subscribe(
+          data => {
+           this.msgs = [];
+           let array:any[]=[];
+           array = data;
+           let counter:number=0;
+           this.timeModel.orderForm.distance='';
+           let dist:number=0;
+           array.forEach(element => {
+             console.log('Element.distance: '+element.distance);
+             dist = element.distance;
+             this.timeModel.orderForm.distance += dist;
+             console.log('Distance: '+this.timeModel.orderForm.distance);
+              this.msgs.push({severity: 'info', summary: element.from+' => '
+              +element.to, detail:'distance:'+ element.distance+', duration:'+element.duration});
+           });
+        console.log('Full distance:'+this.timeModel.orderForm.distance);
+           
+      },
+        error => {
+         
+        }); 
+}
+
+/**
+ * Метод по выбраной в календаре цене, высчитывает ценовую категорию
+ * В switch блоке определяем,какая ценовая категория пришла с сервера.
+ *      1. Price for MONDAY_THUESDAY 
+ *      2. Price for FRIDAY_SUNDAY 
+ *      3. Price for END_OF_MONTH(25-5 day of every month) 
+ *      4. Price for ALL_INCLUSIVE 
+ */
+  private getPriceCategory(){
+     let categoryNumber:number;
+    this._orderService.considerPriceCategory(this.moveDate)
+      .subscribe(
+        data => {
+          console.log('CategoryPriceFromBackEnd:'+data.priceCategory)
+          categoryNumber =+ data.priceCategory;
+          console.log('switch(categoryNumber): '+ categoryNumber)
+          console.log('1 invoke, categoryNumber:'+ categoryNumber)
+         
+        switch(categoryNumber){
+          case 1: this.categoryType = PriceCategoryType.MONDAY_THUESDAY
+                break;
+          case 2: this.categoryType = PriceCategoryType.FRIDAY_SUNDAY
+                break;
+          case 4: this.categoryType = PriceCategoryType.END_OF_MONTH
+                break;
+          case 3: this.categoryType = PriceCategoryType.ALL_INCLUSIVE
+                break;
+        }
+        console.log('1.1 FreshCategoryType:'+ this.categoryType)
+         this.changeMoverPrice();
+         
+         this.vehicle={
+           avaliableTruckAm:data.avaliableTruckAm,
+           avaliableTruckPm:data.avaliableTruckPm,
+           avaliableVanAm:data.avaliableVanAm,
+           avaliableVanPm:data.avaliableVanPm,
+           priceCatergory:0
+         };
+         this.vehicle = data;
+         console.log("avalNumber"+this.vehicle.avaliableTruckAm)
+         this.display = true; // Open Modal Window
+      },
+        error => {
+          console.log('login error: ' + error)
+        });     
+}
+
+
   ngOnInit() {
+    this.timeModel.paymentDetailsForm.heavyItemPrice=0;
+     this.vehicle={
+           avaliableTruckAm:0,
+           avaliableTruckPm:0,
+           avaliableVanAm:0,
+           avaliableVanPm:0,
+           priceCatergory:0
+         };
+    this.categoryType = PriceCategoryType.MONDAY_THUESDAY;
+    this.timeModel.orderForm.company = 'Royal';
+    this.timeModel.paymentDetailsForm.totalForFirstHours = 3;
+
+    this.priceCategory = new PriceCategory();
     this.initPaymentPrice();
-    this.initCompanyPrice();
     this.initCompanies();
     this.initAdvertisements();
     this.initSizeOfMoves();
@@ -617,28 +749,24 @@ export class OrderComponent implements OnInit {
     this.initStorageSize();
     this.initTotalHours();
     this.initStatus();
-    this.timeModel.orderForm.company = 'Apple';
+    
     this.moverType = MoversType.TWO;
-    // this.timeModel.paymentDetailsForm.movers = 2;
 
-    this.changeMoverPrice();
-    console.log('perHourPriceOnInitMethod:' + this.paymentPrice.ratePerHourPrice)
-    console.log('priceServiceCharge:' + this.paymentPrice.serviceChargePrice)
-    console.log('perHour:' + this.paymentPrice.ratePerHourPrice)
+this.changeMoverPrice(); // init prices
   }
 
-  calendarDateSelect(event:any) {
-    this.msgs = [];
-    this.msgs.push({severity: 'info', summary: 'Info Message', detail: '' + this.orderForm.controls['moveDate'].value});
-  }
-
+ 
   showInfo() {
     this.msgs = [];
     this.msgs.push({severity: 'info', summary: 'Info Message', detail: 'PrimeNG rocks'});
   }
 
   private initCompanies() {
-    this.companies = [{
+    this.companies = [
+        {
+        type: CompanyType.ROYAL_MOVING,
+        name: 'Royal'
+      },{
       type: CompanyType.APPLE_MOVING,
       name: 'Apple'
     }
@@ -653,10 +781,7 @@ export class OrderComponent implements OnInit {
         type: CompanyType.PACIFIC_MOVING,
         name: 'Pacific'
       },
-      {
-        type: CompanyType.ROYAL_MOVING,
-        name: 'Royal'
-      },
+    
       {
         type: CompanyType.SHARK_MOVING,
         name: 'Shark'
@@ -664,10 +789,7 @@ export class OrderComponent implements OnInit {
   }
 
   private initAdvertisements() {
-    this.advertisements = [{
-      type: AdvertisementType.HOW,
-      name: 'How did you hear about us?'
-    },
+    this.advertisements = [
       {
         type: AdvertisementType.GOOGLE,
         name: 'Google Ads'
@@ -887,16 +1009,16 @@ export class OrderComponent implements OnInit {
   }
 
   initHeavyItems() {
-    this.heavyItems = [{
-      type: HeavyItemType.GRAND_PIANO,
-      name: 'Grand piano'
-    }, {
-      type: HeavyItemType.HEAVY_ITEM,
-      name: 'Heavy item'
-    }, {
-      type: HeavyItemType.PIANO,
-      name: 'Piano'
-    }]
+    // this.heavyItems = [{
+    //   type: HeavyItemType.GRAND_PIANO,
+    //   name: 'Grand piano'
+    // }, {
+    //   type: HeavyItemType.HEAVY_ITEM,
+    //   name: 'Heavy item'
+    // }, {
+    //   type: HeavyItemType.PIANO,
+    //   name: 'Piano'
+    // }]
   }
 
   initStorageSize() {
@@ -943,95 +1065,5 @@ export class OrderComponent implements OnInit {
       name: 'Sold'
     }]
   }
-
-
 }
-
-export class Cars {
-  title:string;
-  label:string;
-}
-
-export interface Message {
-  severity:string,
-  summary:string,
-  detail:string
-}
-
-export interface Tape {
-  type:TapeType;
-  name:number;
-}
-
-export interface Shrinks {
-  type:ShrinkType;
-  name:number;
-}
-
-export interface PackingMaterial {
-  type:PackageMaterialType,
-  name:string;
-}
-
-export interface RatePerHours {
-  type:RatePerHourType,
-  name:string;
-}
-
-export interface Tariffs {
-  type:TariffType,
-  name:string;
-}
-
-export interface Companies {
-  type:CompanyType;
-  name:string;
-}
-
-export interface Advertisements {
-  type:AdvertisementType;
-  name:string;
-}
-
-export interface SizeOfMoves {
-  type:SizeOfMoveType;
-  name:string;
-}
-
-export interface Trucks {
-  type:TruckType;
-  name:number;
-}
-
-export interface Movers {
-  type:MoversType;
-  name:number;
-}
-
-export interface PaymentMethods {
-  type:PaymentMethodType,
-  name:string;
-}
-
-export interface HeavyItem {
-  type:HeavyItemType,
-  name:string
-}
-
-export interface StorageSize {
-  type:StorageSizeType,
-  name:string
-}
-
-export interface TotalHour {
-  type:TotalHourType,
-  name:number
-}
-
-export interface Status {
-  type:StatusType,
-  name:string
-}
-
-
 

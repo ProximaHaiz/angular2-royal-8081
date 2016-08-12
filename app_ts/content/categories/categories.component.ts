@@ -1,7 +1,6 @@
 import{Component,OnInit} from '@angular/core';
 import {CategoryServiceComponent} from '../../service/category.service';
 import { ROUTER_DIRECTIVES} from '@angular/router';
-import {MainContentComponent} from '../main_content/main-content.component';
 
 @Component({
     selector:'categories',

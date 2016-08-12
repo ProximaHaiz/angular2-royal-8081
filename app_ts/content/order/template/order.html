@@ -1,5 +1,5 @@
 
-<form class="form" method="post" (ngSubmit)="sent()" [formGroup]="orderForm">
+<form class="form" method="post" (ngSubmit)="sentFullForm()" [formGroup]="orderForm">
   <div class=" main">
     <div class="row placeholders">
 
@@ -31,7 +31,7 @@
             </div>
           </th>
           <th>
-            <div class="input-group col-md-6">
+            <div class="input-group col-md-10">
               <span class="input-group-addon" id="basic-addon17">Size of move</span>
               <div class="dropdown">
                 <select id="packingMaterials" class="form-control">
@@ -51,7 +51,8 @@
                      formControlName="isLabor"
                      name="vehicle"
                      style="margin: 7px 10px 0;"
-                     value="Van"/>-->
+                     value="Van"
+              />
             </div>
           </th>
         </tr>
@@ -67,14 +68,9 @@
                      styleClass="ui-inputtext-text"
                      formControlName="fullName"
                      placeholder="Name"
-                     pInputText/>
-                     
-<!--<p-inputMask alias="integer"
-             [options]="{regex: '[0-9]*'}" 
-              [ngModelOptions]="{standalone: true}"
-              placeholder="" 
-               [(ngModel)]="val2"></p-inputMask>
-                        {{val2}}-->
+                     pInputText
+              />
+                    
             </div>
 
           </th>
@@ -111,7 +107,8 @@
                            style="width:100px;"
                            formControlName="zip"
                            placeholder="Zip from"
-                           pInputText/>
+                           pInputText
+                    />
 
                     <!--<button class="btn btn-default " (click)="addAddressFrom()" type="button">
                         Add
@@ -155,7 +152,8 @@
                     <input type="text"
                            formControlName="address"
                            placeholder="Address to"
-                           pInputText/>
+                           pInputText
+                    />
                                              <span class="glyphicon glyphicon-remove pull-right" style="cursor:pointer"
                                                    *ngIf="orderForm.controls.unLoadingAddress.controls.length > 1"
                                                    (click)="removeAddressTo(i)"></span>
@@ -181,7 +179,8 @@
                            formControlName="zip"
                            style="width:100px;"
                            placeholder="Zip to"
-                           pInputText/>
+                           pInputText
+                    />
                     <!--<button type="button"
                             class="btn btn-default"
                             (click)="addAddressTo()">add
@@ -242,6 +241,11 @@
 
           </th>
           <th>
+             <button type="button" class="btn btn-default btn-number"
+                  (click)="getDistance()"
+                  data-type="plus">
+            <span class="glyphicon glyphicon-plus"></span>
+          </button>
             <div class="row-fluid distance" style="">
               <span class="label">Distance:</span> <span class="distance"></span>
             </div>
@@ -258,7 +262,8 @@
                           placeholder="Packing date"
                           [monthNavigator]="true"
                           [showIcon]="true"
-                          [yearNavigator]="true"></p-calendar>
+                          [yearNavigator]="true">
+              </p-calendar>
             </div>
 
             <div class="btn-group">
@@ -289,7 +294,7 @@
         <tr>
           <th>
             <div class="input-group">
-              <span class="input-group-addon" id="basic-addon1232153">Advertisement</span>
+              <span class="input-group-addon">How did you hear about us?</span>
               <div class="dropdown">
                 <select id="packingMaterials"
                         class="form-control">
@@ -308,7 +313,8 @@
                           placeholder="Estimate date"
                           [monthNavigator]="true"
                           [showIcon]="true"
-                          [yearNavigator]="true"></p-calendar>
+                          [yearNavigator]="true">
+            </p-calendar>
             </div>
 
 
@@ -335,7 +341,7 @@
         <thead>
         <tr>
           <th>
-            <button class="btn btn-success " id="apply">
+            <button class="btn btn-success" type="button" (click)="sentOrderForm()">
               Apply
             </button>
               <button class="btn btn-success " type="button" (click)="sentTest()">
@@ -344,9 +350,6 @@
           </th>
           <th></th>
           <th>
-            <!--<button class="btn btn-success" type="submit">-->
-            <!--Submit-->
-            <!--</button>-->
           </th>
         </tr>
         </thead>
@@ -439,8 +442,11 @@
             </div>
           </th>
           <th style="width: 8%;">
-            <input type="text" class="form-control" [value]="paymentPrice.ratePerHourPrice|currency:'USD':true:'1.2-2'"
-                   placeholder="0.00"/>
+            <input type="text" 
+                   class="form-control" 
+                   [value]="paymentPrice.ratePerHourPrice|currency:'USD':true:'1.2-2'"
+                   placeholder="0.00"
+            />
           </th>
         </tr>
         </thead>
@@ -468,6 +474,7 @@
                    class="form-control"
                    [value]="paymentPrice.serviceChargePrice|currency:'USD':true:'1.2-2'"
                    placeholder="0.00"
+                   pInputText
             />
           </th>
         </tr>
@@ -495,7 +502,9 @@
             <input type="text"
                    id="packingMaterialsSum"
                    class="form-control"
-                   placeholder="0.00"/>packingMaterialsValue
+                   placeholder="0.00"
+                   pInputText
+            />packingMaterialsValue
           </th>
         </tr>
         </thead>
@@ -522,7 +531,9 @@
             <input type="text"
                    id="shrinkSum"
                    class="form-control"
-                   placeholder="0.00"/>shrinkValue
+                   placeholder="0.00"
+                   pInputText
+           />shrinkValue
           </th>
         </tr>
         </thead>
@@ -549,22 +560,26 @@
             <input type="text"
                    class="form-control"
                    placeholder="0.00"
-                   aria-describedby="basic-addon1"/>tapeSum
+                   aria-describedby="basic-addon1"
+                   pInputText
+            />tapeSum
           </th>
         </tr>
         </thead>
         <thead>
         <tr>
-          <th>
+          <th class="col-md-6">
             <div class="input-group">
               <span class="input-group-addon">Heavy Item</span>
-              <div class="dropdown">
-                <select id="packingMaterials" class="form-control">
-                  <option *ngFor="let item of heavyItems" (click)="selectHeavyItem(item)">
-                    {{item.name}}
-                  </option>
-                </select>
-              </div>
+             
+                <p-multiSelect [options]="heavyItems"
+                               [(ngModel)]="selectedheavyItems" 
+                               [ngModelOptions]="{standalone: true}"
+                               #item
+                               (onChange)="changeMultiSelect(item)"
+                >
+                 </p-multiSelect>
+              <!--</div>-->
             </div>
           </th>
           <th>
@@ -575,11 +590,12 @@
             <div class="input-group">
             </div>
           </th>
-          <th>
-            <input type="text"
-                   class="form-control"
-                   placeholder="0.00"
-            />
+          <th class="">
+          <input type="text"
+                     placeholder="0.00"
+                     [value]="timeModel.paymentDetailsForm.heavyItemPrice|currency:'USD':true:'1.2-2'"
+                     pInputText
+          />
           </th>
         </tr>
 
@@ -591,6 +607,7 @@
                      type="text"
                      class="form-control"
                      placeholder="Miles"
+                     pInputText
               />
             </div>
           </th>
@@ -604,7 +621,7 @@
           </th>
         </tr>
         <tr>
-          <th style="width: 30%">
+          <th class="col-md-4 col-ms-3">
             <div class="input-group">
               <label for="vehicle" style="margin-right:15px;">Storage</label>
               <!--Storage&nbsp;&nbsp;&nbsp;&nbsp;-->
@@ -614,7 +631,7 @@
                      value="Bike"/>
             </div>
           </th>
-          <th class="col-md-2">
+          <th class="col-md-3 col-md-ms-2">
             <div class="input-group">
               <span class="input-group-addon">Size of storage unit</span>
               <div class="dropdown">
@@ -680,7 +697,7 @@
         </tr>
         <tr>
           <th>
-            <div class="input-group col-md-4 ">
+            <div class="input-group col-md-8">
               <span class="input-group-addon">Total hours</span>
               <div class="dropdown">
                 <select id="packingMaterials" class="form-control">
@@ -719,9 +736,11 @@
           <th style="width: 40%">
             <div class="form-group">
               <label for="comment">Comment for sales:</label>
-                                    <textarea class="form-control"
-                                              rows="5"
-                                              id="comment"></textarea>
+               <textarea rows="5" 
+                         cols="30" 
+                         pInputTextarea
+                         formControlName="forsalesComment" 
+               ></textarea>
             </div>
           </th>
           <th>
@@ -785,11 +804,13 @@
           <th>
             <div class="form-group">
               <label for="comment">Comment for manager:</label>
-                                    <textarea class="form-control"
-                                              rows="5"
-                                              id="commentt"></textarea>
+              <textarea rows="5" 
+                        cols="30" 
+                        formControlName="forManagerComment" 
+                        pInputTextarea>
+              </textarea>
             </div>
-          </th>
+        </th>
           <th></th>
           <th></th>
           <th></th>
@@ -804,10 +825,57 @@
       </table>
     </div>
   </div>
+
+    <div class="col-md-12" style="margin-bottom:100px;">
+        <!--<button class="btn btn-success col-md-offset-5 col-md-2" 
+        type="submit" (click)="sentFullForm()">Submit full form</button>-->
+        <div class="col-md-offset-5 col-md-3">
+        <button pButton type="text" 
+                (click)="sentFullForm()" 
+                icon="fa-check" 
+                label="Submit full form">
+        </button>
+        </div>
+    </div>
 </form>
 
-<p-growl [value]="msgs" sticky="sticky" style="background:red;"></p-growl>
+<p-growl [value]="msgs" sticky="sticky"></p-growl>
 <!--<button type="button" pButton (click)="showInfo()" label="Info"></button>-->
+
+
+<p-dialog header = "Avaliable cars on: {{moveDate}}" [(visible)]="display" modal="modal" showEffect="fade">
+   
+        Total avaliable Trucks on PM:{{vehicle.avaliableTruckAm}} <br> 
+        Total avaliable Vans on PM:{{vehicle.avaliableVanAm}} <br>
+        <!--<div class="dropdown" style="width:200px;">
+                <select id="packingMaterials" class="form-control">
+                  <option *ngFor="let item of vehicleToAm"
+                          (click)="selectMoveTime(item)">
+                    {{item.type}}, {{item.vehicleRegNumber}}
+                  </option>
+                </select>
+        </div>-->
+      <!--<p-dropdown [options]="vehicleToPm"  [style]="{'width':'150px'}"
+      (click)="selectedVehiclePm()"></p-dropdown>-->
+
+      Total avaliable Trucks on AM:{{vehicle.avaliableTruckAm}} <br>
+      Total avaliable Vans on AM: {{vehicle.avaliableVanPm}}
+      <!--<div class="dropdown" style="width:200px;">
+                <select id="packingMaterials" class="form-control">
+                  <option *ngFor="let item of vehicleToPm"
+                          (click)="selectMoveTime(item)">
+                    {{item.type}}, {{item.vehicleRegNumber}}
+                  </option>
+                </select>
+      </div>-->
+    
+        <footer>
+            <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+                <button type="button" pButton icon="fa-close" (click)="display=false" label="Cancel"></button>
+                <button type="button" pButton icon="fa-check" (click)="display=false" label="Apply"></button>
+            </div>
+        </footer>
+</p-dialog>
 
 
 <script type="text/javascript" src="src/js/datepicker.js"></script>

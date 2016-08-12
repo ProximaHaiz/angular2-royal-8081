@@ -1,4 +1,4 @@
-import { Address } from './address/address'
+import { Address } from './address/address';
 export class OrderForm{
      company:string;  //enums
      fullName:string;
@@ -12,6 +12,7 @@ export class OrderForm{
     
     packingDate:string;
   
+    
     estimateDate:string;
   
     storageDate:string;
@@ -27,6 +28,7 @@ export class OrderForm{
     zipTo:number;
     unloadingAddress:Address [];
     loadingAddress: Address [];
+    distance: string;
     // loadingAddress:string;
     // unLoadingAddress:string;
     tariff:string;

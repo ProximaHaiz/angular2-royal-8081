@@ -8,7 +8,6 @@ import {EventService} from '../service/calendar.service';
 import { Event} from '../content/order/event';
 import { ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
 
-
 @Component({
   templateUrl: 'app_ts/schedule/schedule.html',
   styleUrls:['src/css/fullcalendar.css'],
@@ -37,7 +36,7 @@ export class ScheduleDemo implements OnInit {
   dialogVisible:boolean = false;
   idGen:number = 100;
   private errorMessage:string;
-  private date:Date;
+  private currentDate:string;
 
  
   constructor(private _eventService:EventService,
@@ -50,71 +49,34 @@ export class ScheduleDemo implements OnInit {
   getEvents() {
     this._eventService.getEvents()
       .subscribe(
-        categories=>this.events = categories,
+        events=>{
+        //    this.currentDate = events.currentDate;
+        // console.log('currentDate:'+this.currentDate)
+          this.events = events.calendarEntity;
+         },
+        error=>this.errorMessage = <any>error
+      )
+  }
+
+  getCurrentDate(){
+       this._eventService.CurrentDate()
+      .subscribe(
+        events=>{
+           this.currentDate = events.currentDate;
+          console.log('currentDate:'+this.currentDate)
+         },
         error=>this.errorMessage = <any>error
       )
   }
 
   ngOnInit() {
-    // this._eventService.getEvents().then(events => {this.events = events;});
+    // this.getCurrentDate();
     this.getEvents();
-
     this.header = {
       left: 'prev,next today',
       center: 'title',
       right: 'month,agendaWeek,agendaDay'
     };
-    this.date = new Date();
-   
-    console.log('date:'+this.date)
-  
-    
-
-    // let event1: Event = new Event();
-    // event1.id = 1;
-    // event1.end='';
-    // event1.start = '2016-01-13 18:10:00';
-    // event1.title = 'eventTitle';
-    // this.events=[];
-    // this.events.push(event1);
-
-    // this.events = [
-    //   {
-    //     "title": "Repeating Event",
-    //     "start": "2016-07-13T18:10:00"
-    //   },
-    //   {
-    //     "title": "All Day Event",
-    //     "start": "2016-01-01"
-    //   },
-    //   {
-    //     "title": "Long Event",
-    //     "start": "2016-01-07",
-    //     "end": "2016-01-10"
-    //   },
-    //   {
-    //     "title": "Repeating Event",
-    //     "start": "2016-01-09T16:00:00"
-    //   }, 
-    //   {
-    //     "title": "MyEvent2",
-    //     "start": "2016-01-16T16:00:00"
-    //   },
-    //   {
-    //     "title": "MyEvent1",
-    //     "start": "2016-01-19T16:00:00"
-    //   },
-    //   {
-    //     "title": "Repeating Event",
-    //     "start": "2016-01-16T16:00:00"
-    //   },
-    //   {
-    //     "title": "Conference",
-    //     "start": "2016-01-11",
-    //     "end": "2016-01-13",
-    //     "url": "http://localhost:3000/login"
-    //   }
-    // ];
   }
 
   handleDayClick(event:any) {

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, Headers, URLSearchParams, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import {CONTENT_ITEMS} from '../content/content-data';
 import { API_URL } from './urls';
 import { AbstractService } from './abstract.service';
 import { ManagerDTO } from '../content/manager/managerDTO';

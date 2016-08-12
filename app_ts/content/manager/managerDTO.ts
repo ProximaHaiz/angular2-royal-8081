@@ -1,3 +1,5 @@
+import { Employee } from './interfaces/foreman';
+import { Vehicle } from './interfaces/vehicle';;
 export class ManagerDTO{
     orderNumber:number;
     id:number;
@@ -17,5 +19,11 @@ export class ManagerDTO{
     unloadingAddress:string;
     zipFrom:number;
     zipTo:number;
+
+    foremans:Employee[];
+    drivers:Employee[];
+    moverss:Employee[];
+    helpers:Employee[];
+    vehicles:Vehicle[];
 
 }

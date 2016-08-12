@@ -66,3 +66,6 @@ export enum ShrinkType{
 export enum TapeType{
   T1, T2, T3, T4, T5
 }
+export enum PriceCategoryType{
+  MONDAY_THUESDAY,FRIDAY_SUNDAY,END_OF_MONTH,ALL_INCLUSIVE
+}

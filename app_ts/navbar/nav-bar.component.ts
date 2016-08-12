@@ -4,7 +4,6 @@ import {
      FormControl,
      FormGroup, REACTIVE_FORM_DIRECTIVES 
 } from '@angular/forms';
-import{ProductServiceComponent} from '../service/product.service';
 import{DataHandlerService} from '../service/data-handler.service';
 import {Subject} from "rxjs/Subject";
 
@@ -20,8 +19,7 @@ export class NavBarComponent implements OnInit{
     private searchStream = new Subject<string>();
     private errorMessage: string;
     
-    constructor(private _contactService:ProductServiceComponent,
-                private _dataHandlerService: DataHandlerService){}
+    constructor(private _dataHandlerService: DataHandlerService){}
     
     
  ngOnInit(): any{

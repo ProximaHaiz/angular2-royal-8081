@@ -1,95 +1,100 @@
 
-
-
- <h1>{{id}}</h1>
-
- <form class="form" action="/manager" th:object="${managerForm}" th:action="@{/manager}" id="managerForm"
-              method="post">
-            <div class="col-sm-9  col-md-10 col-md-offset-1 main">
+ <form class="form"  method="post">
+            <div class="col-sm-12  col-md-12 main">
 
                 <!-- CLIENT INFO-->
                 <!--<h2 class="page-header "> Manager board </h2>-->
                 <div class="panel panel-default">
                     <!-- Default panel contents -->
                     <div class="panel-heading">Manager board</div>
-
+                    
                     <!-- Table -->
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>Order#</th>
+                            <th>Order</th>
                             <th>Time</th>
                             <th>Client info</th>
                             <th>Address</th>
                             <th>Value</th>
-                            <th>Asing</th>
+                            <th class="text-center">Asing</th>
                             <th>Manager info</th>
+                            <th>Buttons</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr *ngFor="let item of orders">
-                            <th scope="row">
-                                <p th:text="${managerDTOs[0].orderNumber}"></p>
-                            </th>
                             <td>
-                                <p th:text="${#dates.format(#calendars.createForTimeZone(#calendars.year(managerDTOs[0].orderDay), #calendars.month(managerDTOs[0].orderDay), #calendars.day(managerDTOs[0].orderDay), #calendars.hour(managerDTOs[0].orderDay), #calendars.minute(managerDTOs[0].orderDay),'UK'), 'yyyy-MMM-dd HH:mm')}"></p>
+                                id:{{item.orderNumber}}  
+                            </td>  
 
+                            <td>
+                               time:{{item.date}}
                             </td>
+
                             <td>
                                 Name:{{item.fullName}}<br>
-                                Phone:{{item.phoneNumber}}
+                                Phone:{{item.phoneNumber}}<br>
                                 Email:{{item.mail}}
                             </td>
+
                             <td>
-                                From: {{item.loadingAddress}}<br>
-                                To: {{item.unloadingAddress}}<br>
-                                Distance: 35 miles
+                                From: {{item.loadingAddress[0].address}}<br>
+                                To: {{item.unloadingAddress[0].address}}<br>
+                                Distance: {{item.distance}} miles
                             </td>
+
                             <td>
-                                truck:1
-                                movers:2
-                                rate per 1 hour: $125
+                                truck:{{item.truck}}<br>
+                                movers:{{item.movers}}<br>
+                                rate per 1 hour: {{item.totalPriceForFirstHour|currency:'USD':true:'1.2-2'}}<br>
                             </td>
                             <td style="width: 25%">
                                 <div>
-                                    <div class="input-group">
+                                      <div class="input-group">
                                         <span class="input-group-addon">Truck</span>
                                         <div class="dropdown">
-                                            <select style="width: 50%;" class="form-control" id="truck"
-                                                    th:field="*{truck}">
-                                                <option th:each="truck : ${actualListTruck}"
-                                                        th:value="${truck}"
-                                                        th:text="#{${truck}}">Wireframe
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <!--<p-->
-                                    <div class="input-group">
-                                        <span class="input-group-addon" id="basic-addon15994223">Forman</span>
-                                        <div class="dropdown">
-                                            <select style="width: 50%;" class="form-control" id="movers"
-                                                    th:field="*{movers}">
-                                                <option th:each="movers : ${actualListMovers}"
-                                                        th:value="${movers}"
-                                                        th:text="#{${movers}}">Wireframe
+                                            <select style="width: 70%;" class="form-control">
+                                                <option *ngFor="let vehicle of item.vehicles">
+                                                    {{vehicle.type+' '+vehicle.vehicleRegNumber}}
                                                 </option>
                                             </select>
                                             <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
                                         </div>
                                     </div>
-                                    <!--/>-->
+
                                     
+                                    <!--<p-->
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Forman</span>
+                                        <div class="dropdown">
+                                            <select style="width: 70%;" class="form-control">
+                                                <option *ngFor="let forman of item.foremans">
+                                                    {{forman.firstName+' '+forman.lastName}}
+                                            </select>
+                                            <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
+                                        </div>
+                                    </div>
+                                    <!--/>-->
+                                    <div class="input-group">
+                                        <span class="input-group-addon">Driver</span>
+                                        <div class="dropdown">
+                                            <select style="width: 70%;" class="form-control">
+                                                <option *ngFor="let driver of item.drivers">
+                                                    {{driver.firstName+' '+driver.lastName}}
+                                                </option>
+                                            </select>
+                                             <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
+                                        </div>
+                                    </div>
 
                                     <!--<p-->
                                     <div class="input-group">
-                                        <span class="input-group-addon" id="basic-addon15994223">Driver</span>
+                                        <span class="input-group-addon">Mover</span>
                                         <div class="dropdown">
-                                            <select style="width: 50%;" class="form-control" id="movers"
-                                                    th:field="*{movers}">
-                                                <option th:each="movers : ${actualListMovers}"
-                                                        th:value="${movers}"
-                                                        th:text="#{${movers}}">Wireframe
+                                            <select style="width: 70%;" class="form-control" id="movers">
+                                                <option *ngFor="let mover of item.moverss">
+                                                        {{mover.firstName+' '+ mover.lastName}}
                                                 </option>
                                             </select>
                                             <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
@@ -99,16 +104,13 @@
 
 
                                     <div class="input-group">
-                                        <span class="input-group-addon" id="basic-addon15994223">Mover</span>
+                                        <span class="input-group-addon">Helper</span>
                                         <div class="dropdown">
-                                            <select style="width: 50%;" class="form-control" id="movers"
-                                                    th:field="*{movers}">
-                                                <option th:each="movers : ${actualListMovers}"
-                                                        th:value="${movers}"
-                                                        th:text="#{${movers}}">Wireframe
+                                            <select style="width: 70%;" class="form-control">
+                                                <option *ngFor="let helper of item.helpers">
+                                                    {{helper.firstName+' '+helper.lastName}}
                                                 </option>
                                             </select>
-                                            <button type="button" class="btn btn-sm btn-pill btn-primary">sms</button>
                                         </div>
                                     </div>
                                 </div>
@@ -116,7 +118,11 @@
                             <td>
                                 <div class="form-group">
                                     <label for="comment">Comment for manager:</label>
-                                    <textarea class="form-control" rows="5" id="comment"></textarea>
+                                    <textarea class="form-control" 
+                                              rows="5" 
+                                              id="comment"
+                                              [value]="item.fieldForManagerComments">
+                                    </textarea>
                                 </div>
                             </td>
                             <td>
