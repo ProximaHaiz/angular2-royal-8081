@@ -1,4 +1,13 @@
-
+<div class="col-md-2">
+<p-accordion>
+    <p-accordionTab header="Ordaer count by status: {{orderCountStatus.totalCount}}" [selected]="false">
+       Completed: {{orderCountStatus.completed}}<br>
+       Booked: {{orderCountStatus.booked}}<br>
+       Sold: {{orderCountStatus.sold}}<br>
+       In progress: {{orderCountStatus.inProgress}}
+    </p-accordionTab>
+</p-accordion>
+</div>
 <form class="form" method="post" (ngSubmit)="sentFullForm()" [formGroup]="orderForm">
   <div class=" main">
     <div class="row placeholders">

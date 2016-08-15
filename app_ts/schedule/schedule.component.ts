@@ -2,17 +2,18 @@ import {Component, OnInit, ChangeDetectorRef, Input} from '@angular/core';
 import {HTTP_PROVIDERS}    from '@angular/http';
 import {
   Schedule, Button, InputText, Calendar, Dialog, Checkbox, TabPanel, TabView,
-  CodeHighlighter
+  CodeHighlighter,SelectButton, SelectItem
 } from "primeng/primeng";
 import {EventService} from '../service/calendar.service';
 import { Event} from '../content/order/event';
 import { ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
 
+
 @Component({
   templateUrl: 'app_ts/schedule/schedule.html',
   styleUrls:['src/css/fullcalendar.css'],
   directives: [Schedule, Button, InputText, Calendar,
-    Dialog, Checkbox, TabPanel, TabView, Button, CodeHighlighter, ROUTER_DIRECTIVES],
+    Dialog, Checkbox, TabPanel, TabView, Button, CodeHighlighter, SelectButton,ROUTER_DIRECTIVES],
   providers: [HTTP_PROVIDERS, EventService],
 
   styles: [`
@@ -27,6 +28,14 @@ import { ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
 })
 
 export class ScheduleDemo implements OnInit {
+   types: SelectItem[];
+   selectedType: string;
+   selectedTypes: string[] = ['Completed','Booked','In Progress','Sold'];
+
+   selected(){
+     console.log('select-component')
+   }
+
 
   private events:Event[];
   header:any;
@@ -43,6 +52,11 @@ export class ScheduleDemo implements OnInit {
               private cd:ChangeDetectorRef,
               private _router: Router,
               private route: ActivatedRoute) {
+        this.types = [];
+        this.types.push({label: 'Completed', value: 'Completed'});
+        this.types.push({label: 'Booked', value: 'Booked'});
+        this.types.push({label: 'In Progress', value: 'In Progress'});
+        this.types.push({label: 'Sold', value: 'Sold'});
   }
 
 

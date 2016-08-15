@@ -3,7 +3,7 @@ import {HTTP_PROVIDERS}    from '@angular/http';
 import {ROUTER_DIRECTIVES} from '@angular/router';
 import {
   Schedule, Button, InputText, Calendar, Dialog, Checkbox, TabPanel, TabView,
-  CodeHighlighter, Dropdown, SplitButton, SplitButtonItem, MultiSelect, InputSwitch, Growl, InputMask, SelectItem,
+  CodeHighlighter, Dropdown, SplitButton, SplitButtonItem, MultiSelect, InputSwitch, Growl, InputMask, SelectItem,Accordion,AccordionTab
 } from "primeng/primeng";
 import {
   FormBuilder,
@@ -36,6 +36,7 @@ import {Tape} from './interfaces/tape';
 import {Tariffs} from './interfaces/tariffs';
 import {TotalHour} from './interfaces/total-hour';
 import {Vehicle} from './interfaces/vehicle';
+import { OrderCountStatus } from './interfaces/order-count-status';
 import {Trucks,Shrink} from './interfaces/truck';
 import {PriceCategory} from './utils/category-price';
 import { SearchDistance } from './utils/search-distance';
@@ -56,23 +57,21 @@ SizeOfMoveType, TruckType, PriceCategoryType} from './enums/all-enums';
     Dialog, Checkbox, TabPanel, TabView,
     Button, CodeHighlighter, SplitButton,InputMask,
     SplitButtonItem, MultiSelect, InputSwitch, Growl,
-    ROUTER_DIRECTIVES,
-    REACTIVE_FORM_DIRECTIVES],
+    Accordion,AccordionTab,
+    ROUTER_DIRECTIVES,REACTIVE_FORM_DIRECTIVES],
   providers: [HTTP_PROVIDERS, OrderService, SelectorsService, GoogleApiService],
 })
 
 export class OrderComponent implements OnInit {
   private selectedCompany:string;
   private orderForm:FormGroup;
-  private timeModel:OrderModel;
+  private timeModel:OrderModel;//entity with orderForm and PaymentDetails
   private paymentPrice:PaymentPrice;
   private companyPrice:{[id:string]:CompanyPrice};
   private val2:number;
   private categoryType:PriceCategoryType;
-
-
   private moverType:MoversType;//текущее количество выбранных movers
-
+private orderCountStatus:OrderCountStatus;
 
   // Arrays for selectors...
   private time:string [];
@@ -87,7 +86,6 @@ export class OrderComponent implements OnInit {
   private packageMaterials:PackingMaterial[];
   private shrinks:Shrink[];
   private tapes:Tape[];
-  // private heavyItems:HeavyItem[];
   private storageSizes:StorageSize[];
   private totalHours:TotalHour[];
   private display:boolean = false;
@@ -329,7 +327,7 @@ export class OrderComponent implements OnInit {
              this.timeModel.orderForm.storageDate='2016-08-08'
              this.timeModel.orderForm.storageSize='storageSizeTest';
              this.timeModel.orderForm.tariff='testTariff';
-             this.timeModel.orderForm.distance = 101;
+             this.timeModel.orderForm.distance = '54';
 
             //PaimtenDeatilsForm
              this.timeModel.paymentDetailsForm.company='testCompany';
@@ -348,7 +346,7 @@ export class OrderComponent implements OnInit {
              this.timeModel.paymentDetailsForm.shrink=555;
              this.timeModel.paymentDetailsForm.shrinkValue=666;
              this.timeModel.paymentDetailsForm.sizeOfMove='sizeOfMoveTest';
-             this.timeModel.paymentDetailsForm.status='status';
+             this.timeModel.paymentDetailsForm.status='booked';
              this.timeModel.paymentDetailsForm.storageDate='2016-08-08';
              this.timeModel.paymentDetailsForm.storageSize='storageSize';
              this.timeModel.paymentDetailsForm.tape=5;
@@ -622,6 +620,7 @@ private changeCategoryPrice(){
      this._orderService.saveOrder(this.timeModel)
       .subscribe(
         data => {
+          this.getOrderCountStatus();
         },
         error => {
           console.log('Error:sentTest ' + error)
@@ -719,6 +718,8 @@ getDistance(){
 
 
   ngOnInit() {
+    this.orderCountStatus= new OrderCountStatus();
+    this.getOrderCountStatus();
     this.timeModel.paymentDetailsForm.heavyItemPrice=0;
      this.vehicle={
            avaliableTruckAm:0,
@@ -749,10 +750,18 @@ getDistance(){
     this.initStorageSize();
     this.initTotalHours();
     this.initStatus();
-    
-    this.moverType = MoversType.TWO;
 
-this.changeMoverPrice(); // init prices
+    this.moverType = MoversType.TWO;
+    this.changeMoverPrice(); // init prices
+    
+  }
+
+  getOrderCountStatus(){
+      this._orderService.getOrderCountStatuses()
+      .subscribe(
+        data => {this.orderCountStatus = data;
+          console.log('orderCountStatus:'+this.orderCountStatus.booked)},
+        error =>{})
   }
 
  
