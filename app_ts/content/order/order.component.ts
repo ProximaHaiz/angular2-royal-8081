@@ -71,7 +71,7 @@ export class OrderComponent implements OnInit {
   private val2:number;
   private categoryType:PriceCategoryType;
   private moverType:MoversType;//текущее количество выбранных movers
-private orderCountStatus:OrderCountStatus;
+  private orderCountStatus:OrderCountStatus;
 
   // Arrays for selectors...
   private time:string [];
@@ -96,9 +96,9 @@ private orderCountStatus:OrderCountStatus;
   private moveDate:string;
   
 
-  heavyItems: SelectItem[];
+  private heavyItems: SelectItem[];
 
-    selectedheavyItems: string[] = [];
+  private selectedheavyItems: string[] = [];
 
   private priceCategory:PriceCategory;
 

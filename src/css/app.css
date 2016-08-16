@@ -132,6 +132,10 @@ width: 120px;
     transition: 0.4s;
 }
 
+.table > thead > tr > th{
+    vertical-align: top !important;
+}
+
 
 
 

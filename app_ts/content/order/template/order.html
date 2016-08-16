@@ -1,13 +1,4 @@
-<div class="col-md-2">
-<p-accordion>
-    <p-accordionTab header="Ordaer count by status: {{orderCountStatus.totalCount}}" [selected]="false">
-       Completed: {{orderCountStatus.completed}}<br>
-       Booked: {{orderCountStatus.booked}}<br>
-       Sold: {{orderCountStatus.sold}}<br>
-       In progress: {{orderCountStatus.inProgress}}
-    </p-accordionTab>
-</p-accordion>
-</div>
+
 <form class="form" method="post" (ngSubmit)="sentFullForm()" [formGroup]="orderForm">
   <div class=" main">
     <div class="row placeholders">
@@ -707,7 +698,7 @@
         <tr>
           <th>
             <div class="input-group col-md-8">
-              <span class="input-group-addon">Total hours</span>
+              <span class="input-group-addon">Total first hours</span>
               <div class="dropdown">
                 <select id="packingMaterials" class="form-control">
                   <option *ngFor="let item of totalHours" (click)="selectTotalForFirst(item)">

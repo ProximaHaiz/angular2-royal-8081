@@ -1,8 +1,10 @@
 
-<div class="ContentSideSections Implementation col-md-9">
+<div class="ContentSideSections Implementation col-md-9 col-md-offset-1">
     <div class="col-md-12">
     <p-selectButton [options]="types"
-    [ngModelOptions]="{standalone: true}" 
+    [ngModelOptions]="{standalone: true}"
+    #val
+    (onChange)= "onChange(val)" 
     [(ngModel)]="selectedTypes"
      multiple="multiple"></p-selectButton>
     <p>Selected Types: <span *ngFor="let type of selectedTypes">{{type}} </span></p>
